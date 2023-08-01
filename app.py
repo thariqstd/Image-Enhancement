@@ -2,14 +2,19 @@
 import numpy as np
 import cv2
 from PIL import Image
-from flask import Flask, flash, request, render_template, send_from_directory
+from flask import Flask, flash, request, render_template, send_from_directory, send_file
 from werkzeug.utils import secure_filename
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+from io import BytesIO
 
 app = Flask(__name__, static_url_path='')
 app.secret_key = os.urandom(24)
 
 app.config['ENHANCEMENT_FOLDER'] = 'images'
 app.config['UPLOAD_FOLDER'] = 'uploads'
+app.config['HISTOGRAM_FOLDER'] = 'histograms'
 
 
 @app.route('/uploads/<filename>')
@@ -60,6 +65,43 @@ def histogram_equalization(img):
     img_output = cv2.cvtColor(img_yuv, cv2.COLOR_YUV2BGR)
     return img_output
 
+def generate_histogram_and_save(img, filename):
+    img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    hist, bins = np.histogram(img_gray.ravel(), 256, [0, 256])
+
+    # Generate histogram plot without saving to file
+    plt.plot(hist)
+    plt.xlabel('Pixel Intensity')
+    plt.ylabel('Frequency')
+    plt.title('Histogram')
+
+    histogram_folder = os.path.join(os.path.dirname(__file__), app.config['HISTOGRAM_FOLDER'])
+    if not os.path.exists(histogram_folder):
+        os.makedirs(histogram_folder)
+
+    histogram_path = os.path.join(histogram_folder, f'{filename}.png')
+    plt.savefig(histogram_path)
+    plt.clf()
+
+    return histogram_path
+
+def serve_pil_image(image_path):
+    return send_file(image_path, mimetype='image/png')
+
+@app.route('/uploads/histogram/<filename>', methods=['GET'])
+def upload_histogram(filename):
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    img = cv2.imread(file_path)
+    histogram_path = generate_histogram_and_save(img, filename)
+    return serve_pil_image(histogram_path)
+
+
+@app.route('/images/histogram/<filename>', methods=['GET'])
+def enhancement_histogram(filename):
+    file_path = os.path.join(app.config['ENHANCEMENT_FOLDER'], filename)
+    img = cv2.imread(file_path)
+    histogram_path = generate_histogram_and_save(img, filename)
+    return serve_pil_image(histogram_path)
 
 @app.route('/', methods=['GET'])
 def index():
