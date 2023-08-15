@@ -1,22 +1,40 @@
-{% extends "base.html" %} {% block content %}
+<!-- Meng-extend (memperpanjang) template "base.html" -->
+{% extends "base.html" %}
+
+<!-- Menyediakan blok konten yang akan ditempatkan dalam template induk -->
+{% block content %}
 
 <div class="float-container">
 
+    <!-- Kontainer untuk menampilkan gambar dan histogram sebelum proses enhancement -->
     <div class="float-child">
         <h2 class="a">Before</h2>
-      <div class="green"><img src="{{ url_for('upload_img', filename=file_name) }}" class="img-fluid"></div>
-      <div class="after"><img src="data:image/png;base64,{{ before_histogram_base64 }}" class="img-fluid"></div>
+        <!-- Judul "Before" yang ditampilkan -->
+        <div class="before">
+            <!-- Menampilkan gambar sebelum proses enhancement -->
+            <img src="{{ url_for('upload_img', filename=file_name) }}" class="img-fluid">
+        </div>
+        <div class="histogram">
+            <!-- Menampilkan histogram gambar sebelum proses enhancement yang di-encode dalam base64 -->
+            <img src="data:image/png;base64,{{ before_histogram_base64 }}" class="img-fluid">
+        </div>
     </div>
     
+    <!-- Kontainer untuk menampilkan gambar dan histogram setelah proses enhancement -->
     <div class="float-child">
         <h2 class="a">After</h2>
-      <div class="after"><img src="{{ url_for('enhancement_img', filename=enhancement_file) }}" class="img-fluid"></div>
-      <div class="histogram"><img src="data:image/png;base64,{{ after_histogram_base64 }}" class="img-fluid"></div>
+        <!-- Judul "After" yang ditampilkan -->
+        <div class="after">
+            <!-- Menampilkan gambar hasil proses enhancement -->
+            <img src="{{ url_for('enhancement_img', filename=enhancement_file) }}" class="img-fluid">
+        </div>
+        <div class="histogram">
+            <!-- Menampilkan histogram gambar hasil proses enhancement yang di-encode dalam base64 -->
+            <img src="data:image/png;base64,{{ after_histogram_base64 }}" class="img-fluid">
+        </div>
     </div>
     
-
-   
   </div>
  
-
+<!-- Akhir blok konten -->
 {% endblock %}

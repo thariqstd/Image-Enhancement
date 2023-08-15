@@ -1,61 +1,57 @@
-{% extends "base.html" %} {% block content %}
+<!-- Meng-extend (memperpanjang) template "base.html" -->
+{% extends "base.html" %}
 
-
-
-<h2></h2>
+<!-- Menyediakan blok konten untuk ditampilkan dalam template induk -->
+{% block content %}
 
 <div>
-    <form id="upload-file"  action="/predict" method="POST" enctype="multipart/form-data">
-      <center> {% for message in get_flashed_messages() %}
+    <!-- Form untuk mengunggah gambar dan memilih algoritma -->
+    <form id="upload-file" action="/predict" method="POST" enctype="multipart/form-data">
+      <center>
+        <!-- Loop untuk menampilkan pesan kesalahan yang diberikan oleh server -->
+        {% for message in get_flashed_messages() %}
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
           {{ message }}
           <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-
         {% endfor %}
       </center>
 
+      <!-- Kartu untuk mengunggah gambar dan memilih algoritma -->
       <div class="card">
         <div class="card-header">
          <h4> Upload Image </h4>
         </div>
         <div class="card-body">
           <h5 class="card-title">Browse Image</h5>
+          <!-- Input untuk memilih gambar yang akan diunggah -->
           <p class="card-text"><input type="file" id="file" name="file" ></p>
           <p>
             <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Choose Algorithm</label>
+            <!-- Pilihan algoritma yang akan digunakan -->
             <select name="Algorithm" class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
               <option value="default">Choose...</option>
               <option value="Med_Filter">Median Filter</option>
               <option value="Hist_Equalization">Histogram Equalization</option>
             </select>
-          
           </p>
           
+          <!-- Tombol untuk memulai proses gambar -->
           <input type="submit" class="btn btn-primary" name="submit" value="Process">
         </div>
       </div>
-
-                
-
-       
-        
-          
     </form>
 
-    
-        
-  
-   
-
+    <!-- Loader yang akan ditampilkan saat gambar sedang diproses -->
     <div class="loader" style="display:box;"></div>
 
+    <!-- Hasil proses gambar akan ditampilkan di sini -->
     <h3 id="result">
         <span> </span>
     </h3>
-
 </div>
 
+<!-- Akhir blok konten -->
 {% endblock %}
